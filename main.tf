@@ -32,8 +32,7 @@ resource "azurerm_network_interface" "this" {
   name                      = "${var.name}-nic-${count.index+1}"
   location                  = "${var.location}"
   resource_group_name       = "${var.resource_group_name}"
-  # TODO: create a secgrp unless one is provided. also support no secgrp
-  # network_security_group_id = "${}"
+  network_security_group_id = "${var.network_security_group_id}"
 
   ip_configuration {
     name                          = "primary-ipconfig"
@@ -43,6 +42,22 @@ resource "azurerm_network_interface" "this" {
   }
 
   tags = "${var.tags}"
+}
+
+resource "azurerm_application_security_group" "this" {
+  name                = "${var.name}-asg"
+  location            = "${var.location}"
+  resource_group_name = "${var.resource_group_name}"
+
+  tags = "${var.tags}"
+}
+
+resource "azurerm_network_interface_application_security_group_association" "this" {
+  count = "${length(azurerm_network_interface.this.*.id)}"
+
+  network_interface_id          = "${element(azurerm_network_interface.this.*.id, count.index)}"
+  ip_configuration_name         = "primary-ipconfig"
+  application_security_group_id = "${azurerm_application_security_group.this.id}"
 }
 
 resource "azurerm_virtual_machine" "this" {

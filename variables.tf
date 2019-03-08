@@ -2,12 +2,12 @@
 # REQUIRED
 #------------------------------------------------------------------------------
 
-variable "resource_group_name" {
-  description = "The Resource group that will contain the instances"
-}
-
 variable "location" {
   description = "The Azure Region where the VMs will be created"
+}
+
+variable "resource_group_name" {
+  description = "The Resource group that will contain the instances"
 }
 
 variable "subnet_ids" {
@@ -37,6 +37,11 @@ variable "enable_public_endpoint" {
 variable "zones" {
   description = "List of availability zones where VMs will be distributed. Set to any empty list to disable."
   default     = ["1", "2", "3"]
+}
+
+variable "network_security_group_id" {
+  description = "Attach a network security group directoy to the NIC on all VMs. Disabled when value is empty."
+  default     = ""
 }
 
 variable "vm_size" {
@@ -115,13 +120,13 @@ variable "ssh_private_key" {
 }
 
 variable "ranchhand_distro" {
-  description = "Version of RanchHand used to create the Rancher cluster"
+  description = "Platform where RanchHand binary will be executed. Specify linux or darwnin."
   default     = "linux"
 }
 
-variable "ranchhand_version" {
-  description = "Version of RanchHand used to create the Rancher cluster"
-  default     = "0.1.0-rc1"
+variable "ranchhand_release" {
+  description = "Specify the RanchHand release version to use. Check https://github.com/dominodatalab/ranchhand/releases for a list of available releases."
+  default     = "0.1.0-rc4"
 }
 
 variable "tags" {

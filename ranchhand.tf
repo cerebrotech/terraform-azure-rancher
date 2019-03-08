@@ -3,7 +3,7 @@ data "template_file" "ranchhand_launcher" {
 
   vars {
     distro   = "${var.ranchhand_distro}"
-    version  = "${var.ranchhand_version}"
+    version  = "${var.ranchhand_release}"
     ssh_user = "${var.admin_username}"
     ssh_key  = "${var.ssh_private_key}"
     node_ips = "${join(",", azurerm_public_ip.this.*.ip_address)}"
