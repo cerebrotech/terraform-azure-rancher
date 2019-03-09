@@ -20,5 +20,8 @@ fi
 
 ./$bin run \
   --node-ips "${node_ips}" \
+  --internal-ips "${internal_ips}" \
   --ssh-user "${ssh_user}" \
+  --ssh-proxy-host "${ssh_proxy_host}" \
+  --ssh-proxy-user "${ssh_proxy_user}" \
   --ssh-key-path ${ssh_key}

@@ -119,6 +119,16 @@ variable "ssh_private_key" {
   default     = "~/.ssh/id_rsa"
 }
 
+variable "ssh_proxy_host" {
+  description = "Bastion host to proxy SSH connections through"
+  default     = ""
+}
+
+variable "ssh_proxy_user" {
+  description = "Bastion host SSH username"
+  default     = ""
+}
+
 variable "ranchhand_distro" {
   description = "Platform where RanchHand binary will be executed. Specify linux or darwnin."
   default     = "linux"
@@ -127,6 +137,11 @@ variable "ranchhand_distro" {
 variable "ranchhand_release" {
   description = "Specify the RanchHand release version to use. Check https://github.com/dominodatalab/ranchhand/releases for a list of available releases."
   default     = "0.1.0-rc4"
+}
+
+variable "working_dir" {
+  description = "Working directory to run RanchHand from"
+  default     = ""
 }
 
 variable "tags" {
