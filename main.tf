@@ -53,7 +53,7 @@ resource "azurerm_application_security_group" "this" {
 }
 
 resource "azurerm_network_interface_application_security_group_association" "this" {
-  count = "${length(azurerm_network_interface.this.*.id)}"
+  count = "${var.instance_count}"
 
   network_interface_id          = "${element(azurerm_network_interface.this.*.id, count.index)}"
   ip_configuration_name         = "primary-ipconfig"
@@ -107,6 +107,18 @@ resource "azurerm_virtual_machine" "this" {
     ssh_keys {
       path     = "/home/${var.admin_username}/.ssh/authorized_keys"
       key_data = "${file("${var.ssh_public_key}")}"
+    }
+  }
+
+  # Dummy ssh session to ensure we're ready for rancher install
+  provisioner "remote-exec" {
+    inline = "echo Kilroy was here"
+
+    connection {
+      user = "${var.ssh_proxy_user}"
+      private_key = "${file(var.ssh_private_key)}"
+      bastion_host = "${var.ssh_proxy_host}"
+      bastion_user = "${var.ssh_proxy_user}"
     }
   }
 
