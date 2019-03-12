@@ -15,7 +15,7 @@ locals {
     RHEL = {
       publisher = "RedHat"
       offer     = "RHEL"
-      sku       = "7-RAW"
+      sku       = "7-RAW-CI"
     }
   }
 }

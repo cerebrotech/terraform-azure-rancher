@@ -74,6 +74,10 @@ variable "vm_os_version" {
   default     = "latest"
 }
 
+variable "custom_data" {
+  description = "Rendered custom_data to apply on provisioned virtual_machines."
+}
+
 variable "os_disk_type" {
   description = "The root partition disk type"
   default     = "Standard_LRS"
