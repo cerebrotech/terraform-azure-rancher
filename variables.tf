@@ -76,6 +76,7 @@ variable "vm_os_version" {
 
 variable "custom_data" {
   description = "Rendered custom_data to apply on provisioned virtual_machines."
+  default     = ""
 }
 
 variable "os_disk_type" {

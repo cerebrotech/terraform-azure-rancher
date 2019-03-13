@@ -99,7 +99,7 @@ resource "azurerm_virtual_machine" "this" {
   os_profile {
     computer_name  = "${var.name}-${count.index+1}"
     admin_username = "${var.admin_username}"
-    custom_data = "${var.custom_data}"
+    custom_data    = "${var.custom_data}"
   }
 
   os_profile_linux_config {
