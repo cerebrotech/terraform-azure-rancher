@@ -119,7 +119,7 @@ resource "azurerm_virtual_machine" "this" {
     inline = "echo 'sshd is running'"
 
     connection {
-      user         = "${var.ssh_proxy_user == "" ? var.admin_username : var.ssh_proxy_user}"
+      user         = "${var.admin_username}"
       private_key  = "${file(var.ssh_private_key)}"
       bastion_host = "${var.ssh_proxy_host}"
       bastion_user = "${var.ssh_proxy_user}"
