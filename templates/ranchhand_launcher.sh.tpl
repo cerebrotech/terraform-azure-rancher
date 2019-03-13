@@ -13,6 +13,7 @@ artifact="ranchhand_${version}_${distro}_amd64.tar.gz"
 url="https://github.com/dominodatalab/ranchhand/releases/download/v${version}/$artifact"
 ssh_proxy_host="${ssh_proxy_host}"
 ssh_proxy_user="${ssh_proxy_user}"
+ssh_key_path=${ssh_key_path} ## Do not quote or ~ won't expand
 
 if [[ ! -d $workdir ]]; then
   mkdir -p $workdir
@@ -42,7 +43,7 @@ fi
 $bin run \
   --node-ips "${node_ips}" \
   --ssh-user "${ssh_user}" \
-  --ssh-key-path ${ssh_key_path}
+  --ssh-key-path $ssh_key_path
 
 if [[ -n "$ssh_proxy_host" ]]; then
   ssh $ssh_args $ssh_host_str rm $remote_key_path
