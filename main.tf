@@ -115,9 +115,8 @@ resource "azurerm_virtual_machine" "this" {
     }
   }
 
-  # Dummy ssh session to ensure we're ready for rancher install
   provisioner "remote-exec" {
-    inline = "echo Kilroy was here"
+    inline = "echo 'sshd is running'"
 
     connection {
       user = "${var.ssh_proxy_user}"
