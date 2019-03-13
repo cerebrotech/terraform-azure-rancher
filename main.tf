@@ -53,6 +53,10 @@ resource "azurerm_application_security_group" "this" {
 }
 
 resource "azurerm_network_interface_application_security_group_association" "this" {
+  # https://github.com/hashicorp/terraform/issues/10857
+  #
+  # NOTE: switch the count to `length(azurerm_network_interface.this.*.id)` as
+  # soon as computed values are supported.
   count = "${var.instance_count}"
 
   network_interface_id          = "${element(azurerm_network_interface.this.*.id, count.index)}"

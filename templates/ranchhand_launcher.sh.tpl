@@ -26,12 +26,6 @@ if [[ -n "$ssh_proxy_host" ]]; then
   ssh_host_str="$ssh_proxy_user@$ssh_proxy_host"
   remote_key_path="$workdir/ssh_key"
 
-  ### If we can get rke to work with ssh-agent, we could do this and
-  ### add -A to the final ssh command instead of copying the key...
-  # eval $(ssh-agent)
-  # trap 'kill $SSH_AGENT_PID && exit 1' EXIT
-  # ssh-add $ssh_key_path
-
   ssh $ssh_args $ssh_host_str mkdir -p $workdir
   scp $ssh_args $ssh_key_path $ssh_host_str:$remote_key_path
   rsync -ai --rsh="ssh $ssh_args" ./ $ssh_host_str:$workdir
