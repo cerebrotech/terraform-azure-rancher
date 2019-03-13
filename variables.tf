@@ -134,6 +134,11 @@ variable "ssh_proxy_user" {
   default     = ""
 }
 
+variable "tags" {
+  description = "A mapping of tags to assign to the resource"
+  default     = {}
+}
+
 variable "ranchhand_distro" {
   description = "Platform where RanchHand binary will be executed. Specify linux or darwnin."
   default     = "linux"
@@ -141,15 +146,10 @@ variable "ranchhand_distro" {
 
 variable "ranchhand_release" {
   description = "Specify the RanchHand release version to use. Check https://github.com/dominodatalab/ranchhand/releases for a list of available releases."
-  default     = "0.1.0-rc4"
+  default     = "0.1.0-rc5"
 }
 
-variable "working_dir" {
-  description = "Working directory to run RanchHand from"
+variable "ranchhand_working_dir" {
+  description = "Directory where ranchhand should be executed. Defaults to the current working directory."
   default     = ""
-}
-
-variable "tags" {
-  description = "A mapping of tags to assign to the resource"
-  default     = {}
 }
