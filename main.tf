@@ -53,7 +53,11 @@ resource "azurerm_application_security_group" "this" {
 }
 
 resource "azurerm_network_interface_application_security_group_association" "this" {
-  count = "${length(azurerm_network_interface.this.*.id)}"
+  # https://github.com/hashicorp/terraform/issues/10857
+  #
+  # NOTE: switch the count to `length(azurerm_network_interface.this.*.id)` as
+  # soon as computed values are supported.
+  count = "${var.instance_count}"
 
   network_interface_id          = "${element(azurerm_network_interface.this.*.id, count.index)}"
   ip_configuration_name         = "primary-ipconfig"
@@ -77,7 +81,7 @@ resource "azurerm_virtual_machine" "this" {
     publisher = "${var.vm_os_supported == "" ? var.vm_os_publisher : lookup(local.supported_os[var.vm_os_supported], "publisher")}"
     offer     = "${var.vm_os_supported == "" ? var.vm_os_offer : lookup(local.supported_os[var.vm_os_supported], "offer")}"
     sku       = "${var.vm_os_supported == "" ? var.vm_os_sku : lookup(local.supported_os[var.vm_os_supported], "sku")}"
-    version   = "${var.vm_os_version}"
+    version   = "${var.vm_os_supported == "" ? var.vm_os_version : lookup(local.supported_os[var.vm_os_supported], "version")}"
   }
 
   storage_os_disk {
@@ -99,6 +103,7 @@ resource "azurerm_virtual_machine" "this" {
   os_profile {
     computer_name  = "${var.name}-${count.index+1}"
     admin_username = "${var.admin_username}"
+    custom_data    = "${var.custom_data}"
   }
 
   os_profile_linux_config {
@@ -107,6 +112,17 @@ resource "azurerm_virtual_machine" "this" {
     ssh_keys {
       path     = "/home/${var.admin_username}/.ssh/authorized_keys"
       key_data = "${file("${var.ssh_public_key}")}"
+    }
+  }
+
+  provisioner "remote-exec" {
+    inline = "echo 'sshd is running'"
+
+    connection {
+      user         = "${var.admin_username}"
+      private_key  = "${file(var.ssh_private_key)}"
+      bastion_host = "${var.ssh_proxy_host}"
+      bastion_user = "${var.ssh_proxy_user}"
     }
   }
 
