@@ -81,7 +81,7 @@ resource "azurerm_virtual_machine" "this" {
     publisher = "${var.vm_os_supported == "" ? var.vm_os_publisher : lookup(local.supported_os[var.vm_os_supported], "publisher")}"
     offer     = "${var.vm_os_supported == "" ? var.vm_os_offer : lookup(local.supported_os[var.vm_os_supported], "offer")}"
     sku       = "${var.vm_os_supported == "" ? var.vm_os_sku : lookup(local.supported_os[var.vm_os_supported], "sku")}"
-    version   = "${var.vm_os_version}"
+    version   = "${var.vm_os_supported == "" ? var.vm_os_version : lookup(local.supported_os[var.vm_os_supported], "version")}"
   }
 
   storage_os_disk {
