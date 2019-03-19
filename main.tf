@@ -14,7 +14,7 @@ provider "template" {
   version = "~> 2.1.0"
 }
 
-resource "azurerm_public_ip" "this" {
+resource "azurerm_public_ip" "vm" {
   count = "${var.enable_public_instances ? var.instance_count : 0}"
 
   name                = "${var.name}-vip-${count.index+1}"
@@ -27,7 +27,7 @@ resource "azurerm_public_ip" "this" {
   tags = "${var.tags}"
 }
 
-resource "azurerm_network_interface" "this" {
+resource "azurerm_network_interface" "vm" {
   count = "${var.instance_count}"
 
   name                      = "${var.name}-nic-${count.index+1}"
@@ -38,14 +38,14 @@ resource "azurerm_network_interface" "this" {
   ip_configuration {
     name                          = "${local.vm_ipconfig_name}"
     subnet_id                     = "${var.subnet_id}"
-    public_ip_address_id          = "${var.enable_public_instances ? element(concat(azurerm_public_ip.this.*.id, list("")), count.index) : ""}"
+    public_ip_address_id          = "${var.enable_public_instances ? element(concat(azurerm_public_ip.vm.*.id, list("")), count.index) : ""}"
     private_ip_address_allocation = "Dynamic"
   }
 
   tags = "${var.tags}"
 }
 
-resource "azurerm_application_security_group" "this" {
+resource "azurerm_application_security_group" "vm" {
   name                = "${var.name}-asg"
   location            = "${var.location}"
   resource_group_name = "${var.resource_group_name}"
@@ -53,16 +53,16 @@ resource "azurerm_application_security_group" "this" {
   tags = "${var.tags}"
 }
 
-resource "azurerm_network_interface_application_security_group_association" "this" {
+resource "azurerm_network_interface_application_security_group_association" "vm" {
   # https://github.com/hashicorp/terraform/issues/10857
   #
-  # NOTE: switch the count to `length(azurerm_network_interface.this.*.id)` as
+  # NOTE: switch the count to `length(azurerm_network_interface.vm.*.id)` as
   # soon as computed values are supported.
   count = "${var.instance_count}"
 
-  network_interface_id          = "${element(azurerm_network_interface.this.*.id, count.index)}"
+  network_interface_id          = "${element(azurerm_network_interface.vm.*.id, count.index)}"
   ip_configuration_name         = "${local.vm_ipconfig_name}"
-  application_security_group_id = "${azurerm_application_security_group.this.id}"
+  application_security_group_id = "${azurerm_application_security_group.vm.id}"
 }
 
 resource "azurerm_virtual_machine" "this" {
@@ -71,7 +71,7 @@ resource "azurerm_virtual_machine" "this" {
   name                  = "${var.name}-${count.index+1}"
   resource_group_name   = "${var.resource_group_name}"
   location              = "${var.location}"
-  network_interface_ids = ["${element(azurerm_network_interface.this.*.id, count.index)}"]
+  network_interface_ids = ["${element(azurerm_network_interface.vm.*.id, count.index)}"]
   vm_size               = "${var.vm_size}"
   zones                 = ["${length(var.zones) > 0 ? var.zones[count.index % length(var.zones)] : ""}"]
 
@@ -167,7 +167,7 @@ resource "azurerm_lb_backend_address_pool" "this" {
 resource "azurerm_network_interface_backend_address_pool_association" "this" {
   count = "${var.instance_count}" # TODO: https://github.com/hashicorp/terraform/issues/10857
 
-  network_interface_id    = "${element(azurerm_network_interface.this.*.id, count.index)}"
+  network_interface_id    = "${element(azurerm_network_interface.vm.*.id, count.index)}"
   ip_configuration_name   = "${local.vm_ipconfig_name}"
   backend_address_pool_id = "${azurerm_lb_backend_address_pool.this.id}"
 }

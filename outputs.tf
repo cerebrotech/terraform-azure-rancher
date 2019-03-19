@@ -20,5 +20,5 @@ output "lb_private_ip_address" {
 
 output "application_security_group_id" {
   description = "ID of the ASG attached to all instance NICs"
-  value       = "${azurerm_application_security_group.this.id}"
+  value       = "${azurerm_application_security_group.vm.id}"
 }
