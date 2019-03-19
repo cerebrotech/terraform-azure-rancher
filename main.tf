@@ -15,12 +15,13 @@ provider "template" {
 }
 
 resource "azurerm_public_ip" "this" {
-  count = "${var.enable_public_endpoint ? var.instance_count : 0}"
+  count = "${var.enable_public_instances ? var.instance_count : 0}"
 
   name                = "${var.name}-vip-${count.index+1}"
   location            = "${var.location}"
   resource_group_name = "${var.resource_group_name}"
-  allocation_method   = "Dynamic"
+  sku                 = "Standard"
+  allocation_method   = "Static"
   zones               = ["${length(var.zones) > 0 ? var.zones[count.index % length(var.zones)] : ""}"]
 
   tags = "${var.tags}"
@@ -35,9 +36,9 @@ resource "azurerm_network_interface" "this" {
   network_security_group_id = "${var.network_security_group_id}"
 
   ip_configuration {
-    name                          = "primary-ipconfig"
-    subnet_id                     = "${var.subnet_ids[count.index % length(var.subnet_ids)]}"
-    public_ip_address_id          = "${var.enable_public_endpoint ? element(concat(azurerm_public_ip.this.*.id, list("")), count.index) : ""}"
+    name                          = "${local.vm_ipconfig_name}"
+    subnet_id                     = "${var.subnet_id}"
+    public_ip_address_id          = "${var.enable_public_instances ? element(concat(azurerm_public_ip.this.*.id, list("")), count.index) : ""}"
     private_ip_address_allocation = "Dynamic"
   }
 
@@ -60,7 +61,7 @@ resource "azurerm_network_interface_application_security_group_association" "thi
   count = "${var.instance_count}"
 
   network_interface_id          = "${element(azurerm_network_interface.this.*.id, count.index)}"
-  ip_configuration_name         = "primary-ipconfig"
+  ip_configuration_name         = "${local.vm_ipconfig_name}"
   application_security_group_id = "${azurerm_application_security_group.this.id}"
 }
 
@@ -127,4 +128,90 @@ resource "azurerm_virtual_machine" "this" {
   }
 
   tags = "${var.tags}"
+}
+
+resource "azurerm_public_ip" "lb" {
+  count = "${var.enable_public_lb ? 1 : 0}"
+
+  name                = "${var.name}-vip-lb"
+  location            = "${var.location}"
+  resource_group_name = "${var.resource_group_name}"
+  sku                 = "Standard"
+  allocation_method   = "Static"
+
+  tags = "${var.tags}"
+}
+
+resource "azurerm_lb" "this" {
+  name                = "${var.name}-${var.enable_public_lb ? "ext" : "int"}-lb"
+  location            = "${var.location}"
+  resource_group_name = "${var.resource_group_name}"
+  sku                 = "Standard"
+
+  frontend_ip_configuration {
+    name                          = "${local.lb_ipconfig_name}"
+    subnet_id                     = "${var.enable_public_lb ? "" : var.subnet_id}"
+    public_ip_address_id          = "${var.enable_public_lb ? azurerm_public_ip.lb.id : ""}"
+    private_ip_address_allocation = "Dynamic"
+  }
+
+  tags = "${var.tags}"
+}
+
+resource "azurerm_lb_backend_address_pool" "this" {
+  name                = "${var.name}-addrpool"
+  resource_group_name = "${var.resource_group_name}"
+  loadbalancer_id     = "${azurerm_lb.this.id}"
+}
+
+resource "azurerm_network_interface_backend_address_pool_association" "this" {
+  count = "${var.instance_count}" # TODO: https://github.com/hashicorp/terraform/issues/10857
+
+  network_interface_id    = "${element(azurerm_network_interface.this.*.id, count.index)}"
+  ip_configuration_name   = "${local.vm_ipconfig_name}"
+  backend_address_pool_id = "${azurerm_lb_backend_address_pool.this.id}"
+}
+
+# TODO: use HTTP checks when rancher chart v2.2.0 is released; currently unsupported.
+#   these TCP checks will only ensure that a node/ingress are up and running.
+resource "azurerm_lb_probe" "https" {
+  name                = "tcp-ack-443"
+  resource_group_name = "${var.resource_group_name}"
+  loadbalancer_id     = "${azurerm_lb.this.id}"
+  protocol            = "Tcp"
+  port                = 443
+}
+
+resource "azurerm_lb_probe" "http" {
+  name                = "tcp-ack-80"
+  resource_group_name = "${var.resource_group_name}"
+  loadbalancer_id     = "${azurerm_lb.this.id}"
+  protocol            = "Tcp"
+  port                = 80
+}
+
+resource "azurerm_lb_rule" "https" {
+  name                = "https"
+  loadbalancer_id     = "${azurerm_lb.this.id}"
+  resource_group_name = "${var.resource_group_name}"
+
+  protocol                       = "Tcp"
+  frontend_port                  = 443
+  backend_port                   = 443
+  backend_address_pool_id        = "${azurerm_lb_backend_address_pool.this.id}"
+  frontend_ip_configuration_name = "${local.lb_ipconfig_name}"
+  probe_id                       = "${azurerm_lb_probe.https.id}"
+}
+
+resource "azurerm_lb_rule" "http" {
+  name                = "http"
+  loadbalancer_id     = "${azurerm_lb.this.id}"
+  resource_group_name = "${var.resource_group_name}"
+
+  protocol                       = "Tcp"
+  frontend_port                  = 80
+  backend_port                   = 80
+  backend_address_pool_id        = "${azurerm_lb_backend_address_pool.this.id}"
+  frontend_ip_configuration_name = "${local.lb_ipconfig_name}"
+  probe_id                       = "${azurerm_lb_probe.http.id}"
 }

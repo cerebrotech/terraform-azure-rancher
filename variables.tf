@@ -10,9 +10,8 @@ variable "resource_group_name" {
   description = "The Resource group that will contain the instances"
 }
 
-variable "subnet_ids" {
-  description = "A list of subnets where the VMs will be created"
-  type        = "list"
+variable "subnet_id" {
+  description = "The subnet where the VMs and (optionally) the load balancer will create their NICs"
 }
 
 #------------------------------------------------------------------------------
@@ -29,9 +28,14 @@ variable "name" {
   default     = "rancher"
 }
 
-variable "enable_public_endpoint" {
-  description = "Create and attached a VIP to the VMs primary network interface"
+variable "enable_public_lb" {
+  description = "Create and attached a VIP to the load balancer"
   default     = true
+}
+
+variable "enable_public_instances" {
+  description = "Create and attached a VIP to primary network interface for all VMs"
+  default     = false
 }
 
 variable "zones" {
@@ -146,7 +150,7 @@ variable "ranchhand_distro" {
 
 variable "ranchhand_release" {
   description = "Specify the RanchHand release version to use. Check https://github.com/dominodatalab/ranchhand/releases for a list of available releases."
-  default     = "0.1.0-rc6"
+  default     = "0.1.0-rc7"
 }
 
 variable "ranchhand_working_dir" {

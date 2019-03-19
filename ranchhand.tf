@@ -1,6 +1,6 @@
 locals {
-  public_ips = "${split(",", var.enable_public_endpoint ? join(",",azurerm_public_ip.this.*.ip_address) : join(",",azurerm_network_interface.this.*.private_ip_address))}"
-  node_ips   = "${var.enable_public_endpoint ?
+  public_ips = "${split(",", var.enable_public_instances ? join(",",azurerm_public_ip.this.*.ip_address) : join(",",azurerm_network_interface.this.*.private_ip_address))}"
+  node_ips   = "${var.enable_public_instances ?
     join(",", formatlist("%v:%v", local.public_ips, azurerm_network_interface.this.*.private_ip_address)) :
     join(",", azurerm_network_interface.this.*.private_ip_address)}"
 }

@@ -1,4 +1,7 @@
 locals {
+  lb_ipconfig_name = "lb-ipconfig"
+  vm_ipconfig_name = "primary-ipconfig"
+
   supported_os = {
     UbuntuServer = {
       publisher = "Canonical"
