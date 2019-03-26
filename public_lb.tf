@@ -57,13 +57,13 @@ resource "azurerm_lb_probe" "public_https" {
 }
 
 resource "azurerm_lb_probe" "public_http" {
-  count = "${var.enable_public_lb ? 1 : 0}"
+  count = "${local.public_lb_routing ? 1 : 0}"
 
   name                = "tcp-ack-80"
   resource_group_name = "${var.resource_group_name}"
   loadbalancer_id     = "${azurerm_lb.public_lb.id}"
   protocol            = "Tcp"
-  port                = "${local.public_lb_routing ? 80 : 65533}"
+  port                = 80
 }
 
 resource "azurerm_lb_rule" "public_https" {
@@ -82,16 +82,30 @@ resource "azurerm_lb_rule" "public_https" {
 }
 
 resource "azurerm_lb_rule" "public_http" {
-  count = "${var.enable_public_lb ? 1 : 0}"
+  count = "${local.public_lb_routing ? 1 : 0}"
 
-  name                = "${local.public_lb_routing ? "http" : "dummy"}"
+  name                = "http"
   loadbalancer_id     = "${azurerm_lb.public_lb.id}"
   resource_group_name = "${var.resource_group_name}"
 
   protocol                       = "Tcp"
-  frontend_port                  = "${local.public_lb_routing ? 80 : 65534}"
-  backend_port                   = "${local.public_lb_routing ? 80 : 65534}"
+  frontend_port                  = 80
+  backend_port                   = 80
   backend_address_pool_id        = "${azurerm_lb_backend_address_pool.public_lb.id}"
   frontend_ip_configuration_name = "${local.lb_ipconfig_name}"
   probe_id                       = "${azurerm_lb_probe.public_http.id}"
+}
+
+resource "azurerm_lb_outbound_rule" "public_outbound_nat" {
+  count = "${var.enable_public_lb ? 1 : 0}"
+
+  name                = "public-lb-outbound-nat"
+  loadbalancer_id     = "${azurerm_lb.public_lb.id}"
+  resource_group_name = "${var.resource_group_name}"
+
+  protocol                  = "All"
+  backend_address_pool_id   = "${azurerm_lb_backend_address_pool.public_lb.id}"
+  frontend_ip_configuration = {
+    name = "${local.lb_ipconfig_name}"
+  }
 }
