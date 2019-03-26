@@ -29,7 +29,17 @@ variable "name" {
 }
 
 variable "enable_public_lb" {
-  description = "Create and attached a VIP to the load balancer"
+  description = "Create and attach a VIP to the load balancer"
+  default     = true
+}
+
+variable "public_lb_routing" {
+  description = "Route rancher through public lb, or just use for NAT"
+  default     = true
+}
+
+variable "enable_private_lb" {
+  description = "Create a private load balancer"
   default     = true
 }
 
