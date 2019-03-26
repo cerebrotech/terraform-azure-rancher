@@ -43,7 +43,9 @@ fi
 $bin run \
   --node-ips "${node_ips}" \
   --ssh-user "${ssh_user}" \
-  --ssh-key-path $ssh_key_path
+  --ssh-key-path $ssh_key_path \
+  --cert-ips "${cert_ips}" \
+  --cert-dns-names "${cert_dns_names}"
 
 if [[ -n "$ssh_proxy_host" ]]; then
   ssh $ssh_args $ssh_host_str rm $remote_key_path

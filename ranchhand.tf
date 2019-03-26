@@ -16,6 +16,8 @@ data "template_file" "ranchhand_launcher" {
     node_ips       = "${local.node_ips}"
     ssh_proxy_host = "${var.ssh_proxy_host}"
     ssh_proxy_user = "${var.ssh_proxy_user}"
+    cert_ips       = "${local.ranchhand_cert_ips}"
+    cert_dns_names = "${var.cert_dnsnames}"
   }
 }
 

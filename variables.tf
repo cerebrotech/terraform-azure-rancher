@@ -157,3 +157,13 @@ variable "ranchhand_working_dir" {
   description = "Directory where ranchhand should be executed. Defaults to the current working directory."
   default     = ""
 }
+
+variable "cert_dnsnames" {
+  description = "Hostnames for the rancher and rke ssl certs"
+  default = "domino.rancher"
+}
+
+variable "cert_ipaddresses" {
+  description = "IP addresses for the rancher and rke ssl certs"
+  default = ""
+}
