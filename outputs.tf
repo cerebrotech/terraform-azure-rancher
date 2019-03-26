@@ -22,3 +22,8 @@ output "application_security_group_id" {
   description = "ID of the ASG attached to all instance NICs"
   value       = "${azurerm_application_security_group.vm.id}"
 }
+
+output "cluster_provisioned" {
+  description = "ID of the null_resource cluster provisioner"
+  value       = "${null_resource.provision_cluster.id}"
+}
