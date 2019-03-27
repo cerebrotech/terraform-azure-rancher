@@ -3,19 +3,19 @@ output "ids" {
   value       = ["${azurerm_virtual_machine.this.*.id}"]
 }
 
-output "lb_id" {
+output "public_lb_id" {
   description = "Load balancer id"
-  value       = "${azurerm_lb.this.id}"
+  value       = "${var.enable_public_lb ? element(concat(azurerm_lb.public_lb.*.id, list("")), 0) : ""}"
 }
 
-output "lb_public_ip_address" {
+output "public_lb_ip_address" {
   description = "Public IP of the load balancer"
-  value       = "${var.enable_public_lb ? azurerm_public_ip.lb.0.ip_address : ""}"
+  value       = "${var.enable_public_lb ? element(concat(azurerm_public_ip.public_lb.*.ip_address, list("")), 0) : ""}"
 }
 
-output "lb_private_ip_address" {
+output "private_lb_ip_address" {
   description = "Private IP of the load balancer"
-  value       = "${azurerm_lb.this.private_ip_address}"
+  value       = "${var.enable_private_lb ? element(concat(azurerm_lb.private_lb.*.private_ip_address, list("")), 0) : ""}" # TODO: Make this accurate
 }
 
 output "application_security_group_id" {
