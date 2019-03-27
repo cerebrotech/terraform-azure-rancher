@@ -170,10 +170,10 @@ variable "ranchhand_working_dir" {
 
 variable "cert_dnsnames" {
   description = "Hostnames for the rancher and rke ssl certs"
-  default = "domino.rancher"
+  default     = "domino.rancher"
 }
 
 variable "cert_ipaddresses" {
   description = "IP addresses for the rancher and rke ssl certs"
-  default = ""
+  default     = ""
 }
