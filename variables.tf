@@ -169,11 +169,11 @@ variable "ranchhand_working_dir" {
 }
 
 variable "ranchhand_cert_dnsnames" {
-  description = "Hostnames for the rancher and rke ssl certs"
+  description = "Hostnames for the rancher and rke ssl certs (comma-delimited)"
   default     = "domino.rancher"
 }
 
 variable "ranchhand_cert_ipaddresses" {
-  description = "IP addresses for the rancher and rke ssl certs"
+  description = "IP addresses for the rancher and rke ssl certs (comma-delimited)"
   default     = ""
 }
