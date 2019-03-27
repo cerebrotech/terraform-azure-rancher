@@ -168,12 +168,12 @@ variable "ranchhand_working_dir" {
   default     = ""
 }
 
-variable "cert_dnsnames" {
+variable "ranchhand_cert_dnsnames" {
   description = "Hostnames for the rancher and rke ssl certs"
   default     = "domino.rancher"
 }
 
-variable "cert_ipaddresses" {
+variable "ranchhand_cert_ipaddresses" {
   description = "IP addresses for the rancher and rke ssl certs"
   default     = ""
 }

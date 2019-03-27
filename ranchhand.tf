@@ -1,6 +1,7 @@
 locals {
-  public_ips = "${split(",", var.enable_public_instances ? join(",",azurerm_public_ip.vm.*.ip_address) : join(",",azurerm_network_interface.vm.*.private_ip_address))}"
-  node_ips   = "${var.enable_public_instances ?
+  ranchhand_cert_ips = "${var.ranchhand_cert_ipaddresses == "" ? local.lb_ip : var.ranchhand_cert_ipaddresses}"
+  public_ips         = "${split(",", var.enable_public_instances ? join(",",azurerm_public_ip.vm.*.ip_address) : join(",",azurerm_network_interface.vm.*.private_ip_address))}"
+  node_ips           = "${var.enable_public_instances ?
     join(",", formatlist("%v:%v", local.public_ips, azurerm_network_interface.vm.*.private_ip_address)) :
     join(",", azurerm_network_interface.vm.*.private_ip_address)}"
 }
@@ -17,7 +18,7 @@ data "template_file" "ranchhand_launcher" {
     ssh_proxy_host = "${var.ssh_proxy_host}"
     ssh_proxy_user = "${var.ssh_proxy_user}"
     cert_ips       = "${local.ranchhand_cert_ips}"
-    cert_dns_names = "${var.cert_dnsnames}"
+    cert_dns_names = "${var.ranchhand_cert_dnsnames}"
   }
 }
 

@@ -3,7 +3,6 @@ locals {
   vm_ipconfig_name   = "primary-ipconfig"
   public_lb_routing  = "${var.enable_public_lb ? var.public_lb_routing : false}"
   lb_ip              = "${local.public_lb_routing ? element(concat(azurerm_public_ip.public_lb.*.ip_address, list("")), 0) : element(concat(azurerm_lb.private_lb.*.private_ip_address, list("")), 0)}"
-  ranchhand_cert_ips = "${var.cert_ipaddresses == "" ? local.lb_ip : var.cert_ipaddresses}"
 
   supported_os = {
     UbuntuServer = {
