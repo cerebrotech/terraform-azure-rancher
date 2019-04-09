@@ -29,6 +29,7 @@ resource "null_resource" "provision_cluster" {
 
   provisioner "local-exec" {
     command     = "${data.template_file.ranchhand_launcher.rendered}"
+    interpreter = ["/bin/bash", "-c"]
     working_dir = "${var.ranchhand_working_dir}"
   }
 }
