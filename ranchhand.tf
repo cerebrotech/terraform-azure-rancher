@@ -1,7 +1,8 @@
 locals {
   ranchhand_cert_ips = "${var.ranchhand_cert_ipaddresses == "" ? local.lb_ip : var.ranchhand_cert_ipaddresses}"
   public_ips         = "${split(",", var.enable_public_instances ? join(",",azurerm_public_ip.vm.*.ip_address) : join(",",azurerm_network_interface.vm.*.private_ip_address))}"
-  node_ips           = "${var.enable_public_instances ?
+
+  node_ips = "${var.enable_public_instances ?
     join(",", formatlist("%v:%v", local.public_ips, azurerm_network_interface.vm.*.private_ip_address)) :
     join(",", azurerm_network_interface.vm.*.private_ip_address)}"
 }
@@ -29,6 +30,7 @@ resource "null_resource" "provision_cluster" {
 
   provisioner "local-exec" {
     command     = "${data.template_file.ranchhand_launcher.rendered}"
+    interpreter = ["/bin/bash", "-c"]
     working_dir = "${var.ranchhand_working_dir}"
   }
 }
