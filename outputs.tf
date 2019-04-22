@@ -3,6 +3,11 @@ output "ids" {
   value       = ["${azurerm_virtual_machine.this.*.id}"]
 }
 
+output "node_ips" {
+  description = "Comma-delimited string of VM node ips"
+  value       = "${local.node_ips}"
+}
+
 output "public_lb_id" {
   description = "Load balancer id"
   value       = "${var.enable_public_lb ? element(concat(azurerm_lb.public_lb.*.id, list("")), 0) : ""}"
