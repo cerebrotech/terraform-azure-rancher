@@ -158,9 +158,9 @@ variable "ranchhand_distro" {
   default     = "linux"
 }
 
-variable "ranchhand_release" {
+variable "release" {
   description = "Specify the RanchHand release version to use. Check https://github.com/dominodatalab/ranchhand/releases for a list of available releases."
-  default     = "0.1.0-rc11"
+  default     = "latest"
 }
 
 variable "ranchhand_working_dir" {
@@ -170,10 +170,10 @@ variable "ranchhand_working_dir" {
 
 variable "ranchhand_cert_dnsnames" {
   description = "Hostnames for the rancher and rke ssl certs (comma-delimited)"
-  default     = "domino.rancher"
+  default     = ["domino.rancher"]
 }
 
 variable "ranchhand_cert_ipaddresses" {
   description = "IP addresses for the rancher and rke ssl certs (comma-delimited)"
-  default     = ""
+  default     = []
 }

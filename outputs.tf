@@ -32,3 +32,8 @@ output "cluster_provisioned" {
   description = "ID of the null_resource cluster provisioner"
   value       = "${null_resource.provision_cluster.id}"
 }
+
+output "admin_password" {
+  description = "Generated password for Rancher default admin user"
+  value       = "${random_string.password.result}"
+}
