@@ -177,3 +177,8 @@ variable "ranchhand_cert_ipaddresses" {
   description = "IP addresses for the rancher and rke ssl certs (comma-delimited)"
   default     = []
 }
+
+variable "admin_password" {
+  description = "Password override for the initial admin user"
+  default     = ""
+}

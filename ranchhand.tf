@@ -40,7 +40,7 @@ resource "null_resource" "provision_cluster" {
     working_dir = "${var.ranchhand_working_dir}"
 
     environment = {
-      RANCHER_PASSWORD = "${random_string.password.result}"
+      RANCHER_PASSWORD = "${var.admin_password == "" ? random_string.password.result : var.admin_password}"
     }
   }
 }

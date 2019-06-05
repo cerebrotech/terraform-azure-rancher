@@ -35,5 +35,5 @@ output "cluster_provisioned" {
 
 output "admin_password" {
   description = "Generated password for Rancher default admin user"
-  value       = "${random_string.password.result}"
+  value       = "${var.admin_password == "" ? random_string.password.result : var.admin_password}"
 }
