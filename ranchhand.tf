@@ -7,10 +7,6 @@ locals {
     join(",", azurerm_network_interface.vm.*.private_ip_address)}"
 }
 
-resource "random_string" "password" {
-  length = 20
-}
-
 module "ranchhand" {
   source = "git@github.com:cerebrotech/terraform-aws-rancher.git//modules/ranchhand"
 
