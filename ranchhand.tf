@@ -11,36 +11,20 @@ resource "random_string" "password" {
   length = 20
 }
 
-data "template_file" "ranchhand_launcher" {
-  template = "${file("${path.module}/templates/launch_ranchhand.sh")}"
+module "ranchhand" {
+  source = "git@github.com:cerebrotech/terraform-aws-rancher.git//modules/ranchhand?ref=steved/password-override"
 
-  vars {
-    distro   = "${var.ranchhand_distro}"
-    release  = "${var.release}"
-    node_ips = "${local.node_ips}"
+  distro   = "${var.ranchhand_distro}"
+  release  = "${var.release}"
+  node_ips = "${split(",", local.node_ips)}"
 
-    cert_ips       = "${join(",", local.ranchhand_cert_ips)}"
-    cert_dns_names = "${join(",", var.ranchhand_cert_dnsnames)}"
+  cert_ipaddresses = "${local.ranchhand_cert_ips}"
+  cert_dnsnames    = "${var.ranchhand_cert_dnsnames}"
 
-    ssh_user       = "${var.admin_username}"
-    ssh_key_path   = "${var.ssh_private_key}"
-    ssh_proxy_user = "${var.ssh_proxy_user}"
-    ssh_proxy_host = "${var.ssh_proxy_host}"
-  }
-}
+  ssh_username   = "${var.admin_username}"
+  ssh_key_path   = "${var.ssh_private_key}"
+  ssh_proxy_user = "${var.ssh_proxy_user}"
+  ssh_proxy_host = "${var.ssh_proxy_host}"
 
-resource "null_resource" "provision_cluster" {
-  triggers {
-    instance_ids = "${join(",", azurerm_virtual_machine.this.*.id)}"
-  }
-
-  provisioner "local-exec" {
-    command     = "${data.template_file.ranchhand_launcher.rendered}"
-    interpreter = ["/bin/bash", "-c"]
-    working_dir = "${var.ranchhand_working_dir}"
-
-    environment = {
-      RANCHER_PASSWORD = "${var.admin_password == "" ? random_string.password.result : var.admin_password}"
-    }
-  }
+  admin_password = "${var.admin_password}"
 }

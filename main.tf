@@ -1,13 +1,13 @@
 terraform {
-  required_version = "~> 0.11.11"
+  version = "~> 0.11"
 }
 
 provider "local" {
-  version = "~> 1.1.0"
+  version = "~> 1.2"
 }
 
 provider "null" {
-  version = "~> 2.1.0"
+  version = "~> 2.1"
 }
 
 provider "random" {
@@ -15,7 +15,7 @@ provider "random" {
 }
 
 provider "template" {
-  version = "~> 2.1.0"
+  version = "~> 2.1"
 }
 
 resource "azurerm_public_ip" "vm" {

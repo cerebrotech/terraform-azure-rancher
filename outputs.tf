@@ -30,10 +30,10 @@ output "application_security_group_id" {
 
 output "cluster_provisioned" {
   description = "ID of the null_resource cluster provisioner"
-  value       = "${null_resource.provision_cluster.id}"
+  value       = "${module.ranchhand.cluster_provisioned}"
 }
 
 output "admin_password" {
   description = "Generated password for Rancher default admin user"
-  value       = "${var.admin_password == "" ? random_string.password.result : var.admin_password}"
+  value       = "${module.ranchhand.admin_password}"
 }
