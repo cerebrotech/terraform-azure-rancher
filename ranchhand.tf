@@ -12,7 +12,7 @@ resource "random_string" "password" {
 }
 
 module "ranchhand" {
-  source = "git@github.com:cerebrotech/terraform-aws-rancher.git//modules/ranchhand?ref=steved/password-override"
+  source = "git@github.com:cerebrotech/terraform-aws-rancher.git//modules/ranchhand"
 
   distro   = "${var.ranchhand_distro}"
   release  = "${var.release}"
