@@ -23,4 +23,6 @@ module "ranchhand" {
   ssh_proxy_host = "${var.ssh_proxy_host}"
 
   admin_password = "${var.admin_password}"
+
+  working_dir = "${var.ranchhand_working_dir}"
 }
