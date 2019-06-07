@@ -8,7 +8,7 @@ locals {
 }
 
 module "ranchhand" {
-  source = "git@github.com:cerebrotech/ranchhand.git//terraform?ref=steved/add-tf"
+  source = "github.com/dominodatalab/ranchhand/terraform"
 
   distro   = "${var.ranchhand_distro}"
   release  = "${var.release}"
