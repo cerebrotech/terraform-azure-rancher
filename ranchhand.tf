@@ -1,5 +1,5 @@
 locals {
-  ranchhand_cert_ips = [concat([local.lb_ip], var.ranchhand_cert_ipaddresses)]
+  ranchhand_cert_ips = concat([local.lb_ip], var.ranchhand_cert_ipaddresses)
   public_ips = split(
     ",",
     var.enable_public_instances ? join(",", azurerm_public_ip.vm.*.ip_address) : join(",", azurerm_network_interface.vm.*.private_ip_address),
