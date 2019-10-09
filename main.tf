@@ -120,8 +120,8 @@ resource "azurerm_virtual_machine" "this" {
     inline = ["echo 'sshd is running'"]
 
     connection {
-      host         = ""    # TF-UPGRADE-TODO: Set this to the IP address of the machine's primary network interface
-      type         = "ssh" # TF-UPGRADE-TODO: If this is a windows instance without an SSH server, change to "winrm"
+      host         = element(azurerm_network_interface.vm.*.private_ip_address, count.index)
+      type         = "ssh"
       user         = var.admin_username
       private_key  = file(var.ssh_private_key)
       bastion_host = var.ssh_proxy_host
