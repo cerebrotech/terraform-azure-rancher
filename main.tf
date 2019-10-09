@@ -117,7 +117,7 @@ resource "azurerm_virtual_machine" "this" {
   }
 
   provisioner "remote-exec" {
-    inline = "echo 'sshd is running'"
+    inline = ["echo 'sshd is running'"]
 
     connection {
       host         = ""    # TF-UPGRADE-TODO: Set this to the IP address of the machine's primary network interface
