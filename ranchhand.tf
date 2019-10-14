@@ -5,14 +5,11 @@ locals {
     var.enable_public_instances ? join(",", azurerm_public_ip.vm.*.ip_address) : join(",", azurerm_network_interface.vm.*.private_ip_address),
   )
 
-  node_ips = var.enable_public_instances ? join(
-    ",",
-    formatlist(
-      "%v:%v",
-      local.public_ips,
-      azurerm_network_interface.vm.*.private_ip_address,
-    ),
-  ) : join(",", azurerm_network_interface.vm.*.private_ip_address)
+  node_ips = formatlist(
+          (var.enable_public_instances ? "%s:%s" : "%[2]s"),
+          local.public_ips,
+          azurerm_network_interface.vm.*.private_ip_address,
+        )
 }
 
 module "ranchhand" {
@@ -20,7 +17,7 @@ module "ranchhand" {
 
   distro   = var.ranchhand_distro
   release  = var.release
-  node_ips = split(",", local.node_ips)
+  node_ips = local.node_ips
 
   cert_ipaddresses = local.ranchhand_cert_ips
   cert_dnsnames    = var.ranchhand_cert_dnsnames
