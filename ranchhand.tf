@@ -1,13 +1,9 @@
 locals {
   ranchhand_cert_ips = concat([local.lb_ip], var.ranchhand_cert_ipaddresses)
-  public_ips = split(
-    ",",
-    var.enable_public_instances ? join(",", azurerm_public_ip.vm.*.ip_address) : join(",", azurerm_network_interface.vm.*.private_ip_address),
-  )
 
   node_ips = formatlist(
           (var.enable_public_instances ? "%s:%s" : "%[2]s"),
-          local.public_ips,
+          var.enable_public_instances ? azurerm_public_ip.vm.*.ip_address : azurerm_network_interface.vm.*.private_ip_address,
           azurerm_network_interface.vm.*.private_ip_address,
         )
 }
