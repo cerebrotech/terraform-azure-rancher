@@ -9,7 +9,7 @@ locals {
 }
 
 module "ranchhand" {
-  source = "github.com/dominodatalab/ranchhand.git//terraform?ref=v0.1.2-rc1"
+  source = "github.com/dominodatalab/ranchhand.git//terraform?ref=v0.1.4-rc1"
 
   distro   = var.ranchhand_distro
   release  = var.release
