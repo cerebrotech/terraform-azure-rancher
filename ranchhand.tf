@@ -9,10 +9,8 @@ locals {
 }
 
 module "ranchhand" {
-  source = "github.com/dominodatalab/ranchhand.git//terraform?ref=v0.1.2-rc1"
+  source = "github.com/dominodatalab/ranchhand.git?ref=v0.3.0"
 
-  distro   = var.ranchhand_distro
-  release  = var.release
   node_ips = local.node_ips
 
   cert_ipaddresses = local.ranchhand_cert_ips
