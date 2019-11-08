@@ -153,16 +153,6 @@ variable "tags" {
   default     = {}
 }
 
-variable "ranchhand_distro" {
-  description = "Platform where RanchHand binary will be executed. Specify linux or darwnin."
-  default     = "linux"
-}
-
-variable "release" {
-  description = "Specify the RanchHand release version to use. Check https://github.com/dominodatalab/ranchhand/releases for a list of available releases."
-  default     = "v0.1.2-rc1"
-}
-
 variable "ranchhand_working_dir" {
   description = "Directory where ranchhand should be executed. Defaults to the current working directory."
   default     = ""
