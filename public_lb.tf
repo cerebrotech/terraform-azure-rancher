@@ -97,7 +97,7 @@ resource "azurerm_lb_rule" "public_http" {
 }
 
 resource "azurerm_lb_outbound_rule" "public_outbound_nat" {
-  count = var.enable_public_lb ? 1 : 0
+  count = var.enable_public_lb && !var.public_lb_routing ? 1 : 0
 
   name                = "public-lb-outbound-nat"
   loadbalancer_id     = azurerm_lb.public_lb[0].id
