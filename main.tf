@@ -100,7 +100,7 @@ resource "azurerm_virtual_machine" "this" {
     inline = ["echo 'sshd is running'"]
 
     connection {
-      host         = element(azurerm_network_interface.vm.*.private_ip_address, count.index)
+      host         = element(coalescelist(azurerm_public_ip.vm.*.ip_address, azurerm_network_interface.vm.*.private_ip_address), count.index)
       type         = "ssh"
       user         = var.admin_username
       private_key  = file(var.ssh_private_key)
