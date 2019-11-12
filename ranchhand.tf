@@ -1,17 +1,20 @@
 locals {
   ranchhand_cert_ips = concat([local.lb_ip], var.ranchhand_cert_ipaddresses)
 
-  node_ips = formatlist(
-          (var.enable_public_instances ? "%s:%s" : "%[2]s"),
-          var.enable_public_instances ? azurerm_public_ip.vm.*.ip_address : azurerm_network_interface.vm.*.private_ip_address,
-          azurerm_network_interface.vm.*.private_ip_address,
-        )
+}
+
+data "null_data_source" "node_ips" {
+  count = length(azurerm_virtual_machine.this.*.id)
+  inputs = {
+    id = element(azurerm_virtual_machine.this.*.id, count.index)
+    ip = element(coalescelist(azurerm_public_ip.vm.*.ip_address, azurerm_network_interface.vm.*.private_ip_address), count.index)
+  }
 }
 
 module "ranchhand" {
-  source = "github.com/dominodatalab/ranchhand.git?ref=v0.3.0"
+  source = "github.com/dominodatalab/ranchhand.git?ref=v0.3.1"
 
-  node_ips = local.node_ips
+  node_ips = data.null_data_source.node_ips.*.outputs.ip
 
   cert_ipaddresses = local.ranchhand_cert_ips
   cert_dnsnames    = var.ranchhand_cert_dnsnames
