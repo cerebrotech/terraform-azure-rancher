@@ -6,15 +6,7 @@ resource "azurerm_public_ip" "vm" {
   resource_group_name = var.resource_group_name
   sku                 = "Standard"
   allocation_method   = "Static"
-  # TF-UPGRADE-TODO: In Terraform v0.10 and earlier, it was sometimes necessary to
-  # force an interpolation expression to be interpreted as a list by wrapping it
-  # in an extra set of list brackets. That form was supported for compatibility in
-  # v0.11, but is no longer supported in Terraform v0.12.
-  #
-  # If the expression in the following list itself returns a list, remove the
-  # brackets to avoid interpretation as a list of lists. If the expression
-  # returns a single list item then leave it as-is and remove this TODO comment.
-  zones = [length(var.zones) > 0 ? var.zones[count.index % length(var.zones)] : ""]
+  zones               = length(var.zones) > 0 ? [var.zones[count.index % length(var.zones)]] : []
 
   tags = var.tags
 }
@@ -46,11 +38,7 @@ resource "azurerm_application_security_group" "vm" {
 }
 
 resource "azurerm_network_interface_application_security_group_association" "vm" {
-  # https://github.com/hashicorp/terraform/issues/10857
-  #
-  # NOTE: switch the count to `length(azurerm_network_interface.vm.*.id)` as
-  # soon as computed values are supported.
-  count = var.instance_count
+  count = length(azurerm_network_interface.vm.*.id)
 
   network_interface_id          = element(azurerm_network_interface.vm.*.id, count.index)
   ip_configuration_name         = local.vm_ipconfig_name
@@ -65,15 +53,7 @@ resource "azurerm_virtual_machine" "this" {
   location              = var.location
   network_interface_ids = [element(azurerm_network_interface.vm.*.id, count.index)]
   vm_size               = var.vm_size
-  # TF-UPGRADE-TODO: In Terraform v0.10 and earlier, it was sometimes necessary to
-  # force an interpolation expression to be interpreted as a list by wrapping it
-  # in an extra set of list brackets. That form was supported for compatibility in
-  # v0.11, but is no longer supported in Terraform v0.12.
-  #
-  # If the expression in the following list itself returns a list, remove the
-  # brackets to avoid interpretation as a list of lists. If the expression
-  # returns a single list item then leave it as-is and remove this TODO comment.
-  zones = [length(var.zones) > 0 ? var.zones[count.index % length(var.zones)] : ""]
+  zones                 = length(var.zones) > 0 ? [var.zones[count.index % length(var.zones)]] : []
 
   delete_os_disk_on_termination    = var.delete_os_disk_on_termination
   delete_data_disks_on_termination = var.delete_data_disks_on_termination

@@ -5,7 +5,7 @@ output "ids" {
 
 output "node_ips" {
   description = "Comma-delimited string of VM node ips"
-  value       = local.node_ips
+  value       = join(",", data.null_data_source.node_ips.*.outputs.ip)
 }
 
 output "public_lb_id" {
