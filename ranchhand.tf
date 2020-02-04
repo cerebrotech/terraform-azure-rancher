@@ -12,7 +12,7 @@ data "null_data_source" "node_ips" {
 }
 
 module "ranchhand" {
-  source = "github.com/dominodatalab/ranchhand.git?ref=v0.3.4"
+  source = "github.com/dominodatalab/ranchhand.git?ref=v0.3.5"
 
   node_ips = data.null_data_source.node_ips.*.outputs.ip
 
