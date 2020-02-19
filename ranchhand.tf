@@ -12,12 +12,14 @@ data "null_data_source" "node_ips" {
 }
 
 module "ranchhand" {
-  source = "github.com/dominodatalab/ranchhand.git?ref=v0.3.5"
+  source = "github.com/dominodatalab/ranchhand.git?ref=v0.4.0"
 
   node_ips = data.null_data_source.node_ips.*.outputs.ip
 
   cert_ipaddresses = local.ranchhand_cert_ips
   cert_dnsnames    = var.ranchhand_cert_dnsnames
+
+  rancher_version = var.rancher_version
 
   ssh_username   = var.admin_username
   ssh_key_path   = var.ssh_private_key
