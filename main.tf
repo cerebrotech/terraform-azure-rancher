@@ -97,7 +97,10 @@ resource "azurerm_virtual_machine" "this" {
   }
 
   provisioner "remote-exec" {
-    inline = ["echo 'sshd is running'"]
+    inline = [
+      "echo 'sshd is running'",
+      "cloud-init status --wait"
+    ]
 
     connection {
       host         = element(azurerm_network_interface.vm.*.private_ip_address, count.index)
