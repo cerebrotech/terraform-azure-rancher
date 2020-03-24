@@ -98,7 +98,6 @@ resource "azurerm_virtual_machine" "this" {
 
   provisioner "remote-exec" {
     inline = [
-      "echo 'sshd is running'",
       "cloud-init status --wait"
     ]
 
