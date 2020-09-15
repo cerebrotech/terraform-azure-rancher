@@ -6,7 +6,7 @@ Terraform module which creates an HA deployment of Rancher inside Azure using [R
 
 ```hcl
 module "rancher" {
-  source = "github.com/cerebrotech/terraform-azure-rancher"
+  source = "github.com/dominodatalab/terraform-azure-rancher"
 
   instance_count      = 2
   vm_size             = "Standard_B2s"
